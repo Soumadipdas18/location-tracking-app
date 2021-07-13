@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:locationtracker/constants/constants.dart';
 import 'package:locationtracker/helpers/sharedpref.dart';
 import 'package:flutter/animation.dart';
+import 'package:locationtracker/pages/groups/groups.dart';
 import 'package:locationtracker/pages/welcomescreen/AnimatedBubble.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -352,7 +353,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   void _onTapUpSignup(TapUpDetails details) {
     _buttonControllerSignup.reverse();
     if (_routeLayout) {
-      Navigator.of(context).pushReplacementNamed(GROUP_SCREEN);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) =>  Groups(username: _username)
+        ),
+      );
     } else {
       Navigator.of(context).pushNamed(SIGN_UP);
     }

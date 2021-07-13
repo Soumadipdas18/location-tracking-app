@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:locationtracker/constants/constants.dart';
+import 'package:locationtracker/pages/groups/search.dart';
+import 'package:locationtracker/pages/map.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Groups extends StatefulWidget {
@@ -16,12 +18,12 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
   final FirebaseAuth auth = FirebaseAuth.instance;
   late final String uid;
   late final User user;
-String username="souma18";
   @override
   Widget build(BuildContext context) {
+    print("${widget.username} received");
     Stream<QuerySnapshot> cs = FirebaseFirestore.instance
         .collection('groups')
-        .where('users', arrayContains: username)
+        .where('users', arrayContains: widget.username)
         .snapshots();
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +45,14 @@ String username="souma18";
                             vertical: 1.0, horizontal: 4.0),
                         child: Card(
                             child: ListTile(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>  MyLocation(username: widget.username,users: groupdata[index]['users'],)
+                                  ),
+                                );
+                              },
                               title: Text(groupdata[index]['groupname'],style: TextStyle(fontWeight: FontWeight.bold,),textScaleFactor: 1.4,),
                               subtitle:Text(groupdata[index]['users'].join(','),maxLines: 1,) ,
                             ),
@@ -57,7 +66,12 @@ String username="souma18";
           }),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => Navigator.pushNamed(context, SEARCH),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>  Search(username: widget.username)
+          ),
+        )
       ),
     );
   }
@@ -66,15 +80,8 @@ String username="souma18";
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
-    user = auth.currentUser;
+    user = auth.currentUser!;
     uid = user.uid;
   }
-  // void listtostring(List list){
-  //   String sentence="";
-  //   list.forEach((element) {
-  //     sentence=sentence+element+",";
-  //   });
-  //   sentence
-  // }
 
 }

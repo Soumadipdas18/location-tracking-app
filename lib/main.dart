@@ -37,7 +37,6 @@ class MyApp extends StatelessWidget {
           WELCOME_SCREEN: (context) => WelcomeScreen(),
           SIGN_IN: (context) => Signinpage(title: "sign in"),
           SIGN_UP: (context) => Signuppage(title: "sign up"),
-          SEARCH:(context)=>Search()
         });
   }
 }
