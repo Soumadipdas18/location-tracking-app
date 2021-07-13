@@ -104,17 +104,7 @@ class _FormsState extends State<Forms> {
             email: emailEditingController.text,
             password: passwordEditingController.text);
         await addshared_pref();
-        setState(() {
-          _isloading = false;
-        });
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Logged in successfully')));
-        Navigator.pop(context);
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(
-                builder: (context) => Groups(username:sf.getUsername().toString())
-            )
-        );
+
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -151,8 +141,17 @@ class _FormsState extends State<Forms> {
         snapshot) async {
       snapshot.docs.forEach((element) async {
         await sf.saveUsername(element['name']);
-        _username=element['name'];
-        print(element['name']);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Logged in successfully')));
+        Navigator.pop(context);
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(
+                builder: (context) => Groups(username:element['name'])
+            )
+        );
+        setState(() {
+          _isloading = false;
+        });
       });
     });
 

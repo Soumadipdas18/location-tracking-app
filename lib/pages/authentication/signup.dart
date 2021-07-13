@@ -115,7 +115,7 @@ class _FormsState extends State<Forms> {
         Navigator.pop(context);
         Navigator.pushReplacement(context,
             MaterialPageRoute(
-                builder: (context) => Groups(username:'')
+                builder: (context) => Groups(username:usernameEditingController.text)
             )
         );
       } on FirebaseAuthException catch (e) {
@@ -152,10 +152,10 @@ class _FormsState extends State<Forms> {
     Map<String, dynamic> mapuser = {
       'name': usernameEditingController.text,
       'searchname':setSearchParam(usernameEditingController.text),
-      'email': userCredential.user.email.toString(),
+      'email': userCredential.user!.email.toString(),
     };
     users
-        .doc(userCredential.user.uid.toString())
+        .doc(userCredential.user!.uid.toString())
         .set(mapuser)
         .then((value) => print("User added"))
         .catchError((error) => print("Failed to adduser: $error"));

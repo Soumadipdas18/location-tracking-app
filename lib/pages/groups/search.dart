@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Search extends StatefulWidget {
-  const Search({Key? key}) : super(key: key);
-
+  const Search({Key? key,required this.username}) : super(key: key);
+final String username;
   @override
   _SearchState createState() => _SearchState();
 }
@@ -21,7 +21,6 @@ class _SearchState extends State<Search>
   TextEditingController _groupnamecontroller = new TextEditingController();
   bool _isSearching = false;
   bool _isLoading = false;
-  late String _username;
   List<String> _usernames = <String>[];
   List<String> _selectedusernames = <String>[];
   Map<String, bool> _selectedusernamesbool = <String, bool>{};
@@ -30,18 +29,9 @@ class _SearchState extends State<Search>
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addObserver(this);
-    user = auth.currentUser;
+    user = auth.currentUser!;
     uid = user.uid;
-
-    getshared();
   }
-
-  getshared() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _username = await prefs.getString('username').toString();
-    print(_username);
-  }
-
   @override
   void _startSearch() {
     ModalRoute.of(context)!
@@ -106,7 +96,7 @@ class _SearchState extends State<Search>
               .then((snapshot) {
             setState(() {
               snapshot.docs.forEach((element) {
-                if (element['name'] != _username) {
+                if (element['name'] != widget.username) {
                   if (!_usernames.contains(element['name'])) {
                     _usernames.insert(i, element['name']);
                     if (_selectedusernames.contains(element['name'])) {
@@ -161,61 +151,63 @@ class _SearchState extends State<Search>
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 1.0, horizontal: 4.0),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Wrap(
-                        spacing: 6.0,
-                        runSpacing: 6.0,
-                        children: _selectedusernames
-                            .map((item) => _buildChip(item, Color(0xFFff6666)))
-                            .toList()
-                            .cast<Widget>()),
+          : SingleChildScrollView(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 1.0, horizontal: 4.0),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Wrap(
+                          spacing: 6.0,
+                          runSpacing: 6.0,
+                          children: _selectedusernames
+                              .map((item) => _buildChip(item, Color(0xFFff6666)))
+                              .toList()
+                              .cast<Widget>()),
+                    ),
                   ),
-                ),
-                Container(
-                    child: _selectedusernames.isEmpty
-                        ? null
-                        : Divider(thickness: 1.0)),
-                ListView.builder(
-                    shrinkWrap: true, scrollDirection: Axis.vertical, itemCount: _usernames.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 1.0, horizontal: 4.0),
-                          child: Card(
-                              color: _selectedusernamesbool[_usernames[index]]!
-                                  ? Color(0xff9EA6BA).withOpacity(0.3)
-                                  : Colors.white,
-                              child: ListTile(
-                                  onTap: () {
-                                    setState(() {
-                                      if (!_selectedusernamesbool[
-                                          _usernames[index]]!) {
-                                        _selectedusernames.insert(_selectedusernames.length, _usernames[index]);
-                                        _selectedusernamesbool.update(_usernames[index], (value) => true, ifAbsent: () => true);
-                                      }
-                                      else{
-                                        _deleteselected(_usernames[index]);
-                                      }
-                                    });
-                                  },
-                                  leading: CircleAvatar(
-                                    backgroundColor: Colors.black,
-                                    child: Text(
-                                        _usernames[index][0].toUpperCase()),
-                                  ),
-                                  title: Text(_usernames[index]),
-                                  trailing:
-                                      _selectedusernamesbool[_usernames[index]]! ? Icon(Icons.check) : null)));
-                    }),
-              ],
-            ),
+                  Container(
+                      child: _selectedusernames.isEmpty
+                          ? null
+                          : Divider(thickness: 1.0)),
+                  ListView.builder(
+                      shrinkWrap: true, scrollDirection: Axis.vertical, itemCount: _usernames.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 1.0, horizontal: 4.0),
+                            child: Card(
+                                color: _selectedusernamesbool[_usernames[index]]!
+                                    ? Color(0xff9EA6BA).withOpacity(0.3)
+                                    : Colors.white,
+                                child: ListTile(
+                                    onTap: () {
+                                      setState(() {
+                                        if (!_selectedusernamesbool[
+                                            _usernames[index]]!) {
+                                          _selectedusernames.insert(_selectedusernames.length, _usernames[index]);
+                                          _selectedusernamesbool.update(_usernames[index], (value) => true, ifAbsent: () => true);
+                                        }
+                                        else{
+                                          _deleteselected(_usernames[index]);
+                                        }
+                                      });
+                                    },
+                                    leading: CircleAvatar(
+                                      backgroundColor: Colors.black,
+                                      child: Text(
+                                          _usernames[index][0].toUpperCase()),
+                                    ),
+                                    title: Text(_usernames[index]),
+                                    trailing:
+                                        _selectedusernamesbool[_usernames[index]]! ? Icon(Icons.check) : null)));
+                      }),
+                ],
+              ),
+          ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: creategroup,
@@ -274,7 +266,7 @@ class _SearchState extends State<Search>
   }
 
   Future<void> createcollectiongroup() async {
-    _selectedusernames.insert(_selectedusernames.length, _username);
+    _selectedusernames.insert(_selectedusernames.length, widget.username);
     Map<String, dynamic> mapgroups = {
       'groupname': _groupnamecontroller.text,
       'users': _selectedusernames
@@ -287,6 +279,7 @@ class _SearchState extends State<Search>
         _selectedusernames.clear();
         _selectedusernamesbool.clear();
       });
+      Navigator.of(context).pop();
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Failed to create group ${e}')));
