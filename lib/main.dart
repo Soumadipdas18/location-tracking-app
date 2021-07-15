@@ -1,45 +1,77 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:locationtracker/pages/groups/groups.dart';
-import 'package:locationtracker/pages/groups/search.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:locationtracker/helpers/sharedpref.dart';
 import 'package:locationtracker/pages/authentication/signin.dart';
 import 'package:locationtracker/pages/authentication/signup.dart';
 import 'package:locationtracker/pages/welcomescreen/welcomescreen.dart';
-import 'package:locationtracker/helpers/sharedpref.dart';
 import 'constants/constants.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  runApp(
+    Phoenix(
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late bool isDarkEnabled;
+  bool isloading = true;
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          primarySwatch: Colors.blue,
-        ),
-        initialRoute: WELCOME_SCREEN,
-        routes: {
-          WELCOME_SCREEN: (context) => WelcomeScreen(),
-          SIGN_IN: (context) => Signinpage(title: "sign in"),
-          SIGN_UP: (context) => Signuppage(title: "sign up"),
-        });
+    return isloading
+        ? Center(child: CircularProgressIndicator())
+        : MaterialApp(
+            title: 'Location Tracker',
+            theme: ThemeData(
+              brightness: Brightness.light,
+              primaryColor: Colors.blueAccent,
+              accentColor: Colors.blue[200],
+              primarySwatch: Colors.blue,
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              /* dark theme settings */
+            ),
+            themeMode: isDarkEnabled ? ThemeMode.dark : ThemeMode.light,
+            initialRoute: WELCOME_SCREEN,
+            routes: {
+                WELCOME_SCREEN: (context) => WelcomeScreen(
+                      isDark: isDarkEnabled,
+                    ),
+                SIGN_IN: (context) => Signinpage(
+                      title: "sign in",
+                      isDark: isDarkEnabled,
+                    ),
+                SIGN_UP: (context) => Signuppage(
+                      title: "sign up",
+                      isDark: isDarkEnabled,
+                    ),
+              });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getshared();
+  }
+
+  getshared() async {
+    sharedpref _sf = new sharedpref();
+    isDarkEnabled = await _sf.getIsDakEnabled();
+    setState(() {
+      isloading = false;
+    });
   }
 }
-
-
-
