@@ -4,9 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:locationtracker/pages/groups/groups.dart';
 
 class Signuppage extends StatefulWidget {
-  const Signuppage({Key? key, required this.title}) : super(key: key);
+  const Signuppage({Key? key, required this.title,required this.isDark}) : super(key: key);
   final String title;
-
+  final bool isDark;
   @override
   _SignuppageState createState() => _SignuppageState();
 }
@@ -14,13 +14,13 @@ class Signuppage extends StatefulWidget {
 class _SignuppageState extends State<Signuppage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text(widget.title)), body: Forms());
+    return Scaffold(appBar: AppBar(title: Text(widget.title)), body: Forms(isDark:widget.isDark));
   }
 }
 
 class Forms extends StatefulWidget {
-  const Forms({Key? key}) : super(key: key);
-
+  const Forms({Key? key,required this.isDark}) : super(key: key);
+final bool isDark;
   @override
   _FormsState createState() => _FormsState();
 }
@@ -115,7 +115,7 @@ class _FormsState extends State<Forms> {
         Navigator.pop(context);
         Navigator.pushReplacement(context,
             MaterialPageRoute(
-                builder: (context) => Groups(username:usernameEditingController.text)
+                builder: (context) => Groups(username:usernameEditingController.text,isDark:widget.isDark)
             )
         );
       } on FirebaseAuthException catch (e) {

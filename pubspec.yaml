@@ -25,20 +25,21 @@ dependencies:
     sdk: flutter
   firebase_core:
   firebase_analytics:
-
-  # Add the dependencies for any other Firebase products you want to use in your app
-  # For example, to use Firebase Authentication and Cloud Firestore
   firebase_auth:
   cloud_firestore:
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons:
-  shared_preferences:
-  clipboard:
   animated_background:
-  geocoder: ^0.2.1
   location: ^4.3.0
   google_maps_flutter: ^2.0.6
+  rxdart: ^0.27.1
+  geoflutterfire: ^3.0.1
+  cool_alert: ^1.1.0
+  expansion_tile_card: ^2.0.0
+  random_color: ^1.0.5
+  shared_preferences: ^0.5.7+3
+  day_night_switcher: ^0.2.0+1
+  settings_ui: ^1.0.0
+  flutter_phoenix: ^1.0.0
 
 
 dev_dependencies:

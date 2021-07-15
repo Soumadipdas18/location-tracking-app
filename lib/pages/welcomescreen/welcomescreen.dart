@@ -7,8 +7,8 @@ import 'package:locationtracker/pages/groups/groups.dart';
 import 'package:locationtracker/pages/welcomescreen/AnimatedBubble.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
-
+  const WelcomeScreen({Key? key,required this.isDark}) : super(key: key);
+ final bool isDark;
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
@@ -356,7 +356,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) =>  Groups(username: _username)
+          builder: (BuildContext context) =>  Groups(username: _username,isDark:widget.isDark)
         ),
       );
     } else {
