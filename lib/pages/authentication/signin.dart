@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:locationtracker/constants/constants.dart';
@@ -18,8 +19,6 @@ class Signinpage extends StatefulWidget {
 }
 
 class _SigninpageState extends State<Signinpage> {
-  bool large = false;
-  bool medium = false;
   double? _height;
   double? _width;
   double? _pixelRatio;
@@ -34,12 +33,21 @@ class _SigninpageState extends State<Signinpage> {
     _large = ResponsiveWidget.isScreenLarge(_width!, _pixelRatio!);
     _medium = ResponsiveWidget.isScreenMedium(_width!, _pixelRatio!);
     return Scaffold(
-      appBar: PreferredSize(
-        child: clipShape(),
-        preferredSize: Size(_width!, _height! / 3),
-      ),
       body: SingleChildScrollView(
-        child: Forms(isDark: widget.isDark),
+        child: Container(
+          height: _height,
+          child: Column(
+            children: [
+              PreferredSize(
+                child: clipShape(),
+                preferredSize: Size(_width!, _height! / 3),
+              ),
+              Spacer(),
+              Forms(isDark: widget.isDark),
+              Spacer(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -145,15 +153,24 @@ class Forms extends StatefulWidget {
 }
 
 class _FormsState extends State<Forms> {
+  double? _height;
+  double? _width;
+  double? _pixelRatio;
+  bool _large = false;
+  bool _medium = false;
   TextEditingController emailEditingController = new TextEditingController();
   TextEditingController passwordEditingController = new TextEditingController();
   sharedpref sf = new sharedpref();
   bool _isloading = false;
-  late String _username;
   final keys = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    _height = MediaQuery.of(context).size.height;
+    _width = MediaQuery.of(context).size.width;
+    _pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    _large = ResponsiveWidget.isScreenLarge(_width!, _pixelRatio!);
+    _medium = ResponsiveWidget.isScreenMedium(_width!, _pixelRatio!);
     return _isloading
         ? Container(
             child: Center(child: CircularProgressIndicator()),
@@ -191,19 +208,48 @@ class _FormsState extends State<Forms> {
                     },
                     controller: passwordEditingController,
                   ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                        child: Text(
-                      "Forgot Password?",
-                    )),
+                  SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                            child: Text(
+                          "Forgot Password?",
+                        )),
+                      ),
+                    ],
                   ),
-                  ElevatedButton(
-                      child: Text("Log In"),
-                      // splashColor: Colors.red,
-                      onPressed: () {
-                        signIn();
-                      }),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height / 12,
+                  ),
+                  RaisedButton(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    onPressed: () {
+                      signIn();
+                    },
+                    textColor: Colors.white,
+                    padding: EdgeInsets.all(0.0),
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: _large
+                          ? _width! / 3.5
+                          : (_medium ? _width! / 3.25 : _width! / 3),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                        gradient: LinearGradient(
+                          colors: <Color>[Colors.blue[200]!, Colors.blueAccent],
+                        ),
+                      ),
+                      padding: const EdgeInsets.all(12.0),
+                      child: Text('SIGN IN',
+                          style: TextStyle(
+                              fontSize: _large ? 14 : (_medium ? 12 : 10))),
+                    ),
+                  ),
                 ],
               )),
             ));
@@ -222,20 +268,17 @@ class _FormsState extends State<Forms> {
         await addshared_pref();
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('No user found for that email.')));
+          coolalertfailure('No user found for that email.');
           setState(() {
             _isloading = false;
           });
         } else if (e.code == 'wrong-password') {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Wrong password provided for that user.')));
+          coolalertfailure('Wrong password provided for that user.');
           setState(() {
             _isloading = false;
           });
         } else {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Error $e')));
+          coolalertfailure('Error $e');
           setState(() {
             _isloading = false;
           });
@@ -257,8 +300,7 @@ class _FormsState extends State<Forms> {
         .then((snapshot) async {
       snapshot.docs.forEach((element) async {
         await sf.saveUsername(element['name']);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Logged in successfully')));
+
         Navigator.pop(context);
         Navigator.pushReplacement(
             context,
@@ -267,10 +309,31 @@ class _FormsState extends State<Forms> {
                       username: element['name'],
                       isDark: widget.isDark,
                     )));
+        coolalertsuccess('Logged in successfully');
         setState(() {
           _isloading = false;
         });
       });
     });
+  }
+
+  coolalertsuccess(String text) {
+    CoolAlert.show(
+      context: context,
+      type: CoolAlertType.success,
+      title: 'Congratulations',
+      text: text,
+      loopAnimation: false,
+    );
+  }
+
+  coolalertfailure(String text) {
+    CoolAlert.show(
+      context: context,
+      type: CoolAlertType.error,
+      title: 'Oops...',
+      text: text,
+      loopAnimation: false,
+    );
   }
 }

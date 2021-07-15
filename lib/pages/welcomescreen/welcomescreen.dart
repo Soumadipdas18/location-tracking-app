@@ -7,8 +7,9 @@ import 'package:locationtracker/pages/groups/groups.dart';
 import 'package:locationtracker/pages/welcomescreen/AnimatedBubble.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({Key? key,required this.isDark}) : super(key: key);
- final bool isDark;
+  const WelcomeScreen({Key? key, required this.isDark}) : super(key: key);
+  final bool isDark;
+
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
@@ -180,8 +181,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                                             onTapUp: _onTapUpSignup,
                                             child: Transform.scale(
                                               scale: _scaleSignup,
-                                              child: _animatedButtonUI(
-                                                  "Continue"),
+                                              child:
+                                                  _animatedButtonUI("Continue"),
                                             ),
                                           ),
                                   ),
@@ -307,7 +308,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   Widget _animatedButtonUI(String text) => Container(
         height: 70,
-        width: MediaQuery.of(context).size.width-90,
+        width: MediaQuery.of(context).size.width - 90,
         alignment: Alignment.center,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(100.0),
@@ -356,8 +357,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) =>  Groups(username: _username,isDark:widget.isDark)
-        ),
+            builder: (BuildContext context) =>
+                Groups(username: _username, isDark: widget.isDark)),
       );
     } else {
       Navigator.of(context).pushNamed(SIGN_UP);

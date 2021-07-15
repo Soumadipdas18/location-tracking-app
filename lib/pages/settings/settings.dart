@@ -8,6 +8,7 @@ class Settingspage extends StatefulWidget {
       : super(key: key);
   final String username;
   final String useruid;
+
   @override
   _SettingspageState createState() => _SettingspageState();
 }
@@ -53,10 +54,10 @@ class _SettingspageState extends State<Settingspage> {
       child: Scaffold(
         backgroundColor: !isSwitcheddark ? Colors.white : Color(0xff000000),
         appBar: AppBar(
-            title: Text("Settings"),
-            centerTitle: true,
-            // backgroundColor:
-            //     !isSwitcheddark ? ThemeData().accentColor : Color(0xff6d6666)),
+          title: Text("Settings"),
+          centerTitle: true,
+          // backgroundColor:
+          //     !isSwitcheddark ? ThemeData().accentColor : Color(0xff6d6666)),
         ),
         body: isloading
             ? Center(child: CircularProgressIndicator())

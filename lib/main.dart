@@ -26,28 +26,39 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late bool isDarkEnabled;
-  bool isloading=true;
+  bool isloading = true;
+
   @override
   Widget build(BuildContext context) {
-    return isloading?Center(child:CircularProgressIndicator()):MaterialApp(
-        title: 'Location Tracker',
-        theme: ThemeData(
-          brightness: Brightness.light,
-          primaryColor: Colors.blueAccent,
-          accentColor: Colors.blue[200],
-          primarySwatch: Colors.blue,
-        ),
-        darkTheme: ThemeData(
-          brightness: Brightness.dark,
-          /* dark theme settings */
-        ),
-        themeMode: isDarkEnabled?ThemeMode.dark:ThemeMode.light,
-        initialRoute: WELCOME_SCREEN,
-        routes: {
-          WELCOME_SCREEN: (context) => WelcomeScreen(isDark: isDarkEnabled,),
-          SIGN_IN: (context) => Signinpage(title: "sign in",isDark: isDarkEnabled,),
-          SIGN_UP: (context) => Signuppage(title: "sign up",isDark: isDarkEnabled,),
-        });
+    return isloading
+        ? Center(child: CircularProgressIndicator())
+        : MaterialApp(
+            title: 'Location Tracker',
+            theme: ThemeData(
+              brightness: Brightness.light,
+              primaryColor: Colors.blueAccent,
+              accentColor: Colors.blue[200],
+              primarySwatch: Colors.blue,
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              /* dark theme settings */
+            ),
+            themeMode: isDarkEnabled ? ThemeMode.dark : ThemeMode.light,
+            initialRoute: WELCOME_SCREEN,
+            routes: {
+                WELCOME_SCREEN: (context) => WelcomeScreen(
+                      isDark: isDarkEnabled,
+                    ),
+                SIGN_IN: (context) => Signinpage(
+                      title: "sign in",
+                      isDark: isDarkEnabled,
+                    ),
+                SIGN_UP: (context) => Signuppage(
+                      title: "sign up",
+                      isDark: isDarkEnabled,
+                    ),
+              });
   }
 
   @override
@@ -55,12 +66,12 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     getshared();
   }
-  getshared()async{
+
+  getshared() async {
     sharedpref _sf = new sharedpref();
     isDarkEnabled = await _sf.getIsDakEnabled();
     setState(() {
-      isloading=false;
+      isloading = false;
     });
   }
 }
-

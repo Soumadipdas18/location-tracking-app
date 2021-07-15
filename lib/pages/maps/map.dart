@@ -5,6 +5,8 @@ import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:flutter/services.dart' show rootBundle;
+
 class MyLocation extends StatefulWidget {
   const MyLocation(
       {Key? key,
@@ -13,7 +15,8 @@ class MyLocation extends StatefulWidget {
       required this.users,
       required this.grpid,
       required this.userlat,
-      required this.userlong})
+      required this.userlong,
+      required this.isDark})
       : super(key: key);
   final List users;
   final String username;
@@ -21,6 +24,7 @@ class MyLocation extends StatefulWidget {
   final String userid;
   final double userlat;
   final double userlong;
+  final bool isDark;
 
   @override
   _MyLocationState createState() => _MyLocationState();
@@ -37,10 +41,20 @@ class _MyLocationState extends State<MyLocation> {
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection('groups');
   List<Marker> markers = [];
+  late String _mapStyle;
 
   @override
   void initState() {
     super.initState();
+    if (widget.isDark) {
+      rootBundle.loadString('assets/styles_json/dark.json').then((string) {
+        _mapStyle = string;
+      });
+    } else {
+      rootBundle.loadString('assets/styles_json/light.json').then((string) {
+        _mapStyle = string;
+      });
+    }
     _initialcameraposition = LatLng(widget.userlat, widget.userlong);
     GeoFirePoint center = Geoflutterfire()
         .point(latitude: widget.userlat, longitude: widget.userlong);
@@ -64,10 +78,12 @@ class _MyLocationState extends State<MyLocation> {
 
   void _onMapCreated(GoogleMapController _controller) {
     _controller = _controller;
+    _controller.setMapStyle(_mapStyle);
+
     location.onLocationChanged.listen((l) {
       _controller.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude!, l.longitude!), zoom: 15),
+          CameraPosition(target: LatLng(l.latitude!, l.longitude!), zoom: 17),
         ),
       );
       print(l.latitude);
@@ -90,8 +106,13 @@ class _MyLocationState extends State<MyLocation> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Track Location"),
+        centerTitle: true,
+        // backgroundColor:
+        //     !isSwitcheddark ? ThemeData().accentColor : Color(0xff6d6666)),
+      ),
       body: Stack(
         children: [
           Container(
@@ -125,16 +146,15 @@ class _MyLocationState extends State<MyLocation> {
           ),
         ],
       ),
-    ));
+    );
   }
 
-  void _addMarker(double lat, double lng,String name) {
+  void _addMarker(double lat, double lng, String name) {
     var _marker = Marker(
-      markerId: MarkerId(UniqueKey().toString()),
-      position: LatLng(lat, lng),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
-        infoWindow: InfoWindow(title: name,snippet: '${lat},${lng}')
-    );
+        markerId: MarkerId(UniqueKey().toString()),
+        position: LatLng(lat, lng),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+        infoWindow: InfoWindow(title: name, snippet: '${lat},${lng}'));
     setState(() {
       markers.add(_marker);
     });
@@ -146,13 +166,13 @@ class _MyLocationState extends State<MyLocation> {
       (DocumentSnapshot document) {
         GeoPoint point = document['position']['geopoint'];
         String name = document['name'];
-        _addMarker(point.latitude, point.longitude,name);
+        _addMarker(point.latitude, point.longitude, name);
       },
     );
   }
 
   double _value = 0.0;
-  String _label = '';
+  String _label = ' Adjust Radius';
 
   changed(value) {
     setState(

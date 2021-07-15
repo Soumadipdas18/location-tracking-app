@@ -5,11 +5,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:location/location.dart';
-import 'package:locationtracker/helpers/sharedpref.dart';
 import 'package:locationtracker/models/custom_shape.dart';
 import 'package:locationtracker/models/responsive_ui.dart';
 import 'package:locationtracker/pages/authentication/editableprofile.dart';
 import 'package:locationtracker/pages/groups/search.dart';
+import 'package:locationtracker/pages/info/aboutus.dart';
+import 'package:locationtracker/pages/info/help.dart';
 import 'package:locationtracker/pages/maps/map.dart';
 import 'package:locationtracker/pages/settings/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -102,12 +103,14 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
       context,
       MaterialPageRoute(
           builder: (BuildContext context) => MyLocation(
-              username: username,
-              users: users,
-              userid: uid,
-              grpid: grpid,
-              userlat: _currentPosition.latitude!,
-              userlong: _currentPosition.longitude!)),
+                username: username,
+                users: users,
+                userid: uid,
+                grpid: grpid,
+                userlat: _currentPosition.latitude!,
+                userlong: _currentPosition.longitude!,
+                isDark: widget.isDark,
+              )),
     );
     setState(
       () {
@@ -291,15 +294,20 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
       ],
     );
   }
-  logout() async{
+
+  logout() async {
+    setState(() {
+      _isloading = true;
+    });
     FirebaseAuth.instance.signOut();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.clear();
     setState(() {
-      _isloading=false;
+      _isloading = false;
     });
     Phoenix.rebirth(context);
   }
+
   @override
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
@@ -357,8 +365,7 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
                       context,
                       MaterialPageRoute(
                         builder: (BuildContext context) => EditProfilePage(
-                            username: widget.username,
-                            isDark: widget.isDark),
+                            username: widget.username, isDark: widget.isDark),
                       ),
                     );
                   },
@@ -368,14 +375,28 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
                 child: ListTile(
                   leading: Icon(Icons.help),
                   title: Text("Help"),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              Help(isDark: widget.isDark)),
+                    );
+                  },
                 ),
               ),
               InkWell(
                 child: ListTile(
                   leading: Icon(Icons.info),
                   title: Text("About us"),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              Aboutus(isDark: widget.isDark)),
+                    );
+                  },
                 ),
               ),
               InkWell(
@@ -384,10 +405,19 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
                   title: Text("Log Out"),
                   onTap: () {
                     Navigator.pop(context);
-                    setState(() {
-                      _isloading=true;
-                    });
-                    logout();
+                    CoolAlert.show(
+                        context: context,
+                        type: CoolAlertType.confirm,
+                        text: 'Do you want to log out?',
+                        confirmBtnText: 'Yes',
+                        onConfirmBtnTap: () {
+                          logout();
+                        },
+                        cancelBtnText: 'No',
+                        onCancelBtnTap: () async {
+                          Navigator.of(context).pop();
+                        },
+                        confirmBtnColor: ThemeData().accentColor);
                   },
                 ),
               ),
@@ -487,26 +517,7 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
                                             BorderRadius.circular(4.0)),
                                     onPressed: () {
                                       if (groupdata[index]['owner'] ==
-                                          widget.username) {
-                                        CoolAlert.show(
-                                            context: context,
-                                            type: CoolAlertType.confirm,
-                                            text: 'Want to delete the group',
-                                            confirmBtnText: 'Yes',
-                                            onConfirmBtnTap: () {
-                                              FirebaseFirestore.instance
-                                                  .collection('groups')
-                                                  .doc(groupdata[index].id)
-                                                  .delete();
-                                              Navigator.of(context).pop();
-                                            },
-                                            cancelBtnText: 'No',
-                                            onCancelBtnTap: () async {
-                                              Navigator.of(context).pop();
-                                            },
-                                            confirmBtnColor:
-                                                ThemeData().accentColor);
-                                      }
+                                          widget.username) {}
                                       if (groupdata[index]['owner'] !=
                                           widget.username) {
                                         CoolAlert.show(
@@ -606,8 +617,10 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
         onPressed: () => Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (BuildContext context) =>
-                  Search(username: widget.username)),
+              builder: (BuildContext context) => Search(
+                    username: widget.username,
+                    isDark: widget.isDark,
+                  )),
         ),
       ),
     );

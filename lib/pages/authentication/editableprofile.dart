@@ -52,5 +52,4 @@ class _EditProfilePageState extends State<EditProfilePage> {
     user = auth.currentUser!;
     uid = user.uid;
   }
-
 }
