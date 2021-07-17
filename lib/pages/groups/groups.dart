@@ -67,7 +67,6 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
     user = auth.currentUser!;
     uid = user.uid;
   }
@@ -517,7 +516,25 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
                                             BorderRadius.circular(4.0)),
                                     onPressed: () {
                                       if (groupdata[index]['owner'] ==
-                                          widget.username) {}
+                                          widget.username) {
+                                        CoolAlert.show(
+                                            context: context,
+                                            type: CoolAlertType.confirm,
+                                            text: 'Want to delete the group',
+                                            confirmBtnText: 'Yes',
+                                            onConfirmBtnTap: () {
+                                              FirebaseFirestore.instance
+                                                  .collection('groups')
+                                                  .doc(groupdata[index].id).delete();
+                                              Navigator.of(context).pop();
+                                            },
+                                            cancelBtnText: 'No',
+                                            onCancelBtnTap: () async {
+                                              Navigator.of(context).pop();
+                                            },
+                                            confirmBtnColor:
+                                            ThemeData().accentColor);
+                                      }
                                       if (groupdata[index]['owner'] !=
                                           widget.username) {
                                         CoolAlert.show(

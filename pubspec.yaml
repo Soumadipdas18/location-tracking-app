@@ -23,12 +23,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core:
-  firebase_analytics:
-  firebase_auth:
-  cloud_firestore:
-  cupertino_icons:
-  animated_background:
   location: ^4.3.0
   google_maps_flutter: ^2.0.6
   rxdart: ^0.27.1
@@ -40,6 +34,11 @@ dependencies:
   day_night_switcher: ^0.2.0+1
   settings_ui: ^1.0.0
   flutter_phoenix: ^1.0.0
+  firebase_core: ^1.4.0
+  firebase_auth: ^3.0.1
+  cloud_firestore: ^2.4.0
+  cupertino_icons: ^1.0.3
+  animated_background: ^2.0.0
 
 
 dev_dependencies:
