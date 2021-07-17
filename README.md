@@ -8,24 +8,21 @@ Resouces/ Workflow: https://docs.google.com/document/d/1tjKk1-Op7-3BBH8pgpqKbK-L
 ### package name- com.example.locationtracker
 ### packages used - Firebase, Google Maps Flutter, Geoflutterfire
 
+Currently Email/ Password based Authentication is used for user verification and registration supported by Fireabase Authentication. User is provided with option to create or join multiple groups with option to add or remove members anytime as per need. Location of all the members in the group is shared collectively on a Common google maps Screen with the help of location markers.
 
 Welcome Screen             |  Login Screen
 :-------------------------:|:-------------------------:
-Currently Email/ Password based Authentication is used for user verification and registration supported by Fireabase Authentication.
 
 ![image](https://user-images.githubusercontent.com/82037708/125036470-a90d0200-e0b0-11eb-98d9-ac04b707e85f.png)  |  ![image](https://user-images.githubusercontent.com/82037708/125036508-b75b1e00-e0b0-11eb-82f5-5b60fcf0314a.png)
 
 Groups Screen(light)            |  Groups screen(dark)
 :-------------------------:|:-------------------------:
-User is provided with option to create or join multiple groups with option to add or remove members anytime as per need.
 
 ![image](https://user-images.githubusercontent.com/82037708/125850052-f908c76e-fc23-4db1-98e5-dbad0cf30fb0.png)  |  ![image](https://user-images.githubusercontent.com/82037708/125850121-bf6dc585-7295-409c-8070-4b2193ef9cbe.png)
 
 
-
 Maps screen(light)          |  Maps screen(dark)
 :-------------------------:|:-------------------------:
-Location of all the members in the group is shared collectively on a Common google maps Screen with the help of location markers.
 
 ![image](https://user-images.githubusercontent.com/82037708/125849980-56d3a9ca-cac9-41ec-addf-f7b537aaed19.png) |  ![image](https://user-images.githubusercontent.com/82037708/125849897-0540ac7d-863e-4c5f-b3ff-bee5353eef47.png)
 
