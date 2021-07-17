@@ -67,7 +67,6 @@ class _GroupsState extends State<Groups> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
     user = auth.currentUser!;
     uid = user.uid;
   }

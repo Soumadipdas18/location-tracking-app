@@ -31,8 +31,6 @@ class MyLocation extends StatefulWidget {
 }
 
 class _MyLocationState extends State<MyLocation> {
-  late GoogleMapController mapController;
-  late Marker marker;
   Location location = Location();
   late GoogleMapController _controller;
   late LatLng _initialcameraposition;
@@ -55,7 +53,11 @@ class _MyLocationState extends State<MyLocation> {
         _mapStyle = string;
       });
     }
+    changed(_value);
     _initialcameraposition = LatLng(widget.userlat, widget.userlong);
+    GeoFirePoint myloc = Geoflutterfire()
+        .point(latitude:  widget.userlat, longitude:widget.userlong);
+    dbadd(myloc);
     GeoFirePoint center = Geoflutterfire()
         .point(latitude: widget.userlat, longitude: widget.userlong);
     stream = radius.switchMap((rad) {
@@ -68,6 +70,7 @@ class _MyLocationState extends State<MyLocation> {
     });
   }
 
+
   @override
   void dispose() {
     setState(() {
@@ -76,16 +79,10 @@ class _MyLocationState extends State<MyLocation> {
     super.dispose();
   }
 
-  void _onMapCreated(GoogleMapController _controller) {
-    _controller = _controller;
+  void _onMapCreated(GoogleMapController _ctrlr) {
+    _controller = _ctrlr;
     _controller.setMapStyle(_mapStyle);
-
-    location.onLocationChanged.listen((l) {
-      _controller.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(target: LatLng(l.latitude!, l.longitude!), zoom: 17),
-        ),
-      );
+    location.onLocationChanged.listen((l) async {
       print(l.latitude);
       GeoFirePoint myloc = Geoflutterfire()
           .point(latitude: l.latitude!, longitude: l.longitude!);
@@ -113,38 +110,69 @@ class _MyLocationState extends State<MyLocation> {
         // backgroundColor:
         //     !isSwitcheddark ? ThemeData().accentColor : Color(0xff6d6666)),
       ),
-      body: Stack(
+      body: Column(
         children: [
           Container(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height / 1.4,
             width: MediaQuery.of(context).size.width,
-            child: GoogleMap(
-              initialCameraPosition:
-                  CameraPosition(target: _initialcameraposition, zoom: 3),
-              mapType: MapType.normal,
-              onMapCreated: _onMapCreated,
-              myLocationEnabled: true,
-              markers: markers.toSet(),
-            ),
-          ),
-          Positioned(
-            bottom: 50,
-            right: 10,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Slider(
-                min: 0,
-                max: 1000,
-                divisions: 1000,
-                value: _value,
-                label: _label,
-                activeColor: Colors.blue,
-                inactiveColor: Colors.blue.withOpacity(0.2),
-                onChanged: (double value) => changed(value),
+            child: Stack(children: [
+              GoogleMap(
+                initialCameraPosition:
+                    CameraPosition(target: _initialcameraposition, zoom: 5),
+                mapType: MapType.normal,
+                onMapCreated: (_controller) {
+                  _onMapCreated(_controller);
+                },
+                myLocationEnabled: false,
+                markers: markers.toSet(),
               ),
+              Align(
+                  alignment: Alignment.topRight,
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    child: ElevatedButton(
+                      child: Icon(
+                        Icons.location_pin,
+                      ),
+                      onPressed: getcurrentloc,
+                    ),
+                  ))
+            ]),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 0.0),
+            child: Slider(
+              min: 0,
+              max: 2000,
+              divisions: 2000,
+              value: _value,
+              activeColor: Colors.blue,
+              inactiveColor: Colors.blue.withOpacity(0.2),
+              onChanged: (double value) => changed(value),
             ),
           ),
+          Text(
+            "Adjust Radius",
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
+          Text(
+            _label,
+            style: TextStyle(fontWeight: FontWeight.w300),
+          )
         ],
+      ),
+    );
+  }
+
+  Future<void> getcurrentloc() async {
+    // var zoomlevel = await _controller.getZoomLevel();
+    LocationData _currentPosition = await location.getLocation();
+    _controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target:
+                LatLng(_currentPosition.latitude!, _currentPosition.longitude!),
+            zoom: 15),
       ),
     );
   }
@@ -153,7 +181,9 @@ class _MyLocationState extends State<MyLocation> {
     var _marker = Marker(
         markerId: MarkerId(UniqueKey().toString()),
         position: LatLng(lat, lng),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+        icon: name == widget.username
+            ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange)
+            : BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
         infoWindow: InfoWindow(title: name, snippet: '${lat},${lng}'));
     setState(() {
       markers.add(_marker);
@@ -171,17 +201,17 @@ class _MyLocationState extends State<MyLocation> {
     );
   }
 
-  double _value = 0.0;
-  String _label = ' Adjust Radius';
+  double _value = 1.0;
+  String _label = '';
 
   changed(value) {
-    setState(
-      () {
-        _value = value;
-        _label = '${_value.toInt().toString()} kms';
-        markers.clear();
-        radius.add(value);
-      },
-    );
+    setState(() {
+      _value = value;
+      markers.clear();
+      radius.add(value);
+    });
+    setState(() {
+      _label = '${_value.toInt().toString()} kms';
+    });
   }
 }
