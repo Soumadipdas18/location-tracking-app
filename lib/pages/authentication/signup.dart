@@ -2,6 +2,7 @@ import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:locationtracker/helpers/sharedpref.dart';
 import 'package:locationtracker/models/custom_shape.dart';
 import 'package:locationtracker/models/responsive_ui.dart';
 import 'package:locationtracker/pages/groups/groups.dart';
@@ -161,7 +162,7 @@ class _FormsState extends State<Forms> {
   bool _medium = false;
   bool isloading = false;
   CollectionReference users = FirebaseFirestore.instance.collection("users");
-  final keys = GlobalKey<FormState>();
+  final keys = GlobalKey<FormState>();sharedpref sf = new sharedpref();
 
   @override
   Widget build(BuildContext context) {
@@ -275,11 +276,12 @@ class _FormsState extends State<Forms> {
       });
       try {
         UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
+            .signInWithEmailAndPassword(
                 email: emailEditingController.text,
                 password: passwordEditingController.text);
 
         await dbadd(userCredential);
+        await sf.saveUsername(usernameEditingController.text);
         setState(() {
           isloading = false;
         });
