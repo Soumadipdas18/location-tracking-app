@@ -276,7 +276,7 @@ class _FormsState extends State<Forms> {
       });
       try {
         UserCredential userCredential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
+            .createUserWithEmailAndPassword(
                 email: emailEditingController.text,
                 password: passwordEditingController.text);
 
