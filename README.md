@@ -2,8 +2,6 @@
 
 A Social App Flutter project to allow users share their location among multiple groups and being able to get updated about whereabouts of other group members simultaneously on a shared Google map screen. 
 
-Resouces/ Workflow: https://docs.google.com/document/d/1tjKk1-Op7-3BBH8pgpqKbK-LUfGeYhu80ZR2Q-JkYZ0/edit
-
 ### app name- locationtracker
 ### package name- com.example.locationtracker
 ### packages used - Firebase, Google Maps Flutter, Geoflutterfire
