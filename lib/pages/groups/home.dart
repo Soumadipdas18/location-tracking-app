@@ -8,7 +8,6 @@ import 'package:locationtracker/models/custom_shape.dart';
 import 'package:locationtracker/models/responsive_ui.dart';
 import 'package:locationtracker/pages/authentication/editableprofile.dart';
 import 'package:locationtracker/pages/groups/groups.dart';
-import 'package:locationtracker/pages/groups/search.dart';
 import 'package:locationtracker/pages/info/aboutus.dart';
 import 'package:locationtracker/pages/info/help.dart';
 import 'package:locationtracker/helpers/sharedpref.dart';
@@ -282,19 +281,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       body: _isloading
           ? Center(child: CircularProgressIndicator())
           : pages[_selectedindex],
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        tooltip: "Create a Group",
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) => Search(
-              username: widget.username,
-              isDark: widget.isDark,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
