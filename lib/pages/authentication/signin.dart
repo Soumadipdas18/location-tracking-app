@@ -6,7 +6,7 @@ import 'package:locationtracker/constants/constants.dart';
 import 'package:locationtracker/helpers/sharedpref.dart';
 import 'package:locationtracker/models/custom_shape.dart';
 import 'package:locationtracker/models/responsive_ui.dart';
-import 'package:locationtracker/pages/groups/groups.dart';
+import 'package:locationtracker/pages/groups/home.dart';
 
 class Signinpage extends StatefulWidget {
   const Signinpage({Key? key, required this.title, required this.isDark})
@@ -305,7 +305,7 @@ class _FormsState extends State<Forms> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => Groups(
+                builder: (context) => Home(
                       username: element['name'],
                       isDark: widget.isDark,
                     )));

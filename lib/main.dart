@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:locationtracker/helpers/sharedpref.dart';
 import 'package:locationtracker/pages/authentication/signin.dart';
@@ -10,13 +11,21 @@ import 'constants/constants.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  configLoading();
   runApp(
     Phoenix(
       child: MyApp(),
     ),
   );
 }
-
+void configLoading() {
+  EasyLoading.instance
+    ..indicatorType = EasyLoadingIndicatorType.fadingCircle
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..userInteractions = false
+    ..dismissOnTap = false;
+}
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -58,7 +67,8 @@ class _MyAppState extends State<MyApp> {
                       title: "sign up",
                       isDark: isDarkEnabled,
                     ),
-              });
+              },builder: EasyLoading.init(),);
+
   }
 
   @override
