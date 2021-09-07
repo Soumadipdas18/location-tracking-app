@@ -167,7 +167,6 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     _large = ResponsiveWidget.isScreenLarge(_width!, _pixelRatio!);
     _medium = ResponsiveWidget.isScreenMedium(_width!, _pixelRatio!);
     bool isSwitched = widget.isDark;
-    print("${widget.username} received");
     List pages = [
       Groups(username: widget.username, isDark: widget.isDark),
       EditProfilePage(username: widget.username, isDark: widget.isDark),

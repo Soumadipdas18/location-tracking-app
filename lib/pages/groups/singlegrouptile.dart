@@ -4,6 +4,7 @@ import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:location/location.dart';
+import 'package:locationtracker/pages/groupchats/groupchat.dart';
 import 'package:locationtracker/pages/maps/map.dart';
 
 class SingleGroupTile extends StatefulWidget {
@@ -31,6 +32,12 @@ class _SingleGroupTileState extends State<SingleGroupTile> {
   bool _isloading = false;
   Location location = Location();
   TextEditingController _textfieldcontroller = new TextEditingController();
+  List<bool> hide = [];
+
+  @override
+  void initState() {
+    hide = List.filled(widget.groupdata.length, false);
+  }
 
   Future<void> addmem(BuildContext context, List users, String id) async {
     return showDialog(
@@ -189,7 +196,7 @@ class _SingleGroupTileState extends State<SingleGroupTile> {
           ),
         ),
         subtitle: Text(
-          widget.groupdata[widget.index]['users'].join(','),
+          widget.groupdata[widget.index]['users'].join(', '),
           maxLines: 1,
         ),
         children: <Widget>[
@@ -204,12 +211,21 @@ class _SingleGroupTileState extends State<SingleGroupTile> {
                 horizontal: 16.0,
                 vertical: 8.0,
               ),
-              child: Text(
-                'All members- ${widget.groupdata[widget.index]['users'].join(',')}',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText2!
-                    .copyWith(fontSize: 16),
+              child: RichText(
+                text: TextSpan(
+                  children: <TextSpan>[
+                    TextSpan(
+                        text: 'All members- ',
+                        style: TextStyle(fontWeight: FontWeight.w700)),
+                    TextSpan(
+                        text:
+                            widget.groupdata[widget.index]['users'].join(', ')),
+                  ],
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText2!
+                      .copyWith(fontSize: 16),
+                ),
               ),
             ),
           ),
@@ -241,7 +257,22 @@ class _SingleGroupTileState extends State<SingleGroupTile> {
               FlatButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4.0)),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => GroupChat(
+                            username: widget.username,
+                            users: widget.groupdata[widget.index]['users'],
+                            // userid: widget.uid,
+                            grpid: widget.groupdata[widget.index].id,
+                            // userlat: _currentPosition.latitude!,
+                            // userlong: _currentPosition.longitude!,
+                            isDark: widget.isDark,
+                            groupname: widget.groupdata[widget.index]
+                                ['groupname'])),
+                  );
+                },
                 child: Column(
                   children: <Widget>[
                     Icon(Icons.message_outlined),
@@ -253,104 +284,125 @@ class _SingleGroupTileState extends State<SingleGroupTile> {
                   ],
                 ),
               ),
-            ],
-          ),
-          ButtonBar(
-            alignment: MainAxisAlignment.spaceAround,
-            buttonHeight: 52.0,
-            buttonMinWidth: 90.0,
-            children: <Widget>[
               FlatButton(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4.0)),
                 onPressed: () {
-                  if (widget.groupdata[widget.index]['owner'] ==
-                      widget.username) {
-                    CoolAlert.show(
-                        context: context,
-                        type: CoolAlertType.confirm,
-                        text: 'Want to delete the group',
-                        confirmBtnText: 'Yes',
-                        onConfirmBtnTap: () {
-                          FirebaseFirestore.instance
-                              .collection('groups')
-                              .doc(widget.groupdata[widget.index].id)
-                              .delete();
-                          Navigator.of(context).pop();
-                        },
-                        cancelBtnText: 'No',
-                        onCancelBtnTap: () async {
-                          Navigator.of(context).pop();
-                        },
-                        confirmBtnColor: ThemeData().accentColor);
-                  }
-                  if (widget.groupdata[widget.index]['owner'] !=
-                      widget.username) {
-                    CoolAlert.show(
-                        context: context,
-                        type: CoolAlertType.confirm,
-                        text: 'Want to leave the group',
-                        confirmBtnText: 'Yes',
-                        onConfirmBtnTap: () {
-                          List users = widget.groupdata[widget.index]['users'];
-                          users.remove(widget.username);
-                          FirebaseFirestore.instance
-                              .collection('groups')
-                              .doc(widget.groupdata[widget.index].id)
-                              .update(
-                            {'users': users},
-                          );
-                          Navigator.of(context).pop();
-                        },
-                        cancelBtnText: 'No',
-                        onCancelBtnTap: () async {
-                          Navigator.of(context).pop();
-                        },
-                        confirmBtnColor: ThemeData().accentColor);
-                  }
+                  setState(() {
+                    hide[widget.index] = !hide[widget.index];
+                  });
                 },
                 child: Column(
                   children: <Widget>[
-                    if (widget.groupdata[widget.index]['owner'] ==
-                        widget.username)
-                      Icon(Icons.delete),
-                    if (widget.groupdata[widget.index]['owner'] !=
-                        widget.username)
-                      Icon(Icons.logout),
+                    Icon(Icons.settings),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 2.0),
                     ),
-                    if (widget.groupdata[widget.index]['owner'] ==
-                        widget.username)
-                      Text('Delete'),
-                    if (widget.groupdata[widget.index]['owner'] !=
-                        widget.username)
-                      Text('Leave'),
-                    Text('Group'),
+                    !hide[widget.index] ? Text('Other') : Text('Hide'),
+                    Text('Settings'),
                   ],
                 ),
               ),
-              if (widget.groupdata[widget.index]['owner'] == widget.username)
+            ],
+          ),
+          if (hide[widget.index])
+            ButtonBar(
+              alignment: MainAxisAlignment.spaceAround,
+              buttonHeight: 52.0,
+              buttonMinWidth: 90.0,
+              children: <Widget>[
                 FlatButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4.0)),
                   onPressed: () {
-                    addmem(context, widget.groupdata[widget.index]['users'],
-                        widget.groupdata[widget.index].id);
+                    if (widget.groupdata[widget.index]['owner'] ==
+                        widget.username) {
+                      CoolAlert.show(
+                          context: context,
+                          type: CoolAlertType.confirm,
+                          text: 'Want to delete the group',
+                          confirmBtnText: 'Yes',
+                          onConfirmBtnTap: () {
+                            FirebaseFirestore.instance
+                                .collection('groups')
+                                .doc(widget.groupdata[widget.index].id)
+                                .delete();
+                            Navigator.of(context).pop();
+                          },
+                          cancelBtnText: 'No',
+                          onCancelBtnTap: () async {
+                            Navigator.of(context).pop();
+                          },
+                          confirmBtnColor: ThemeData().accentColor);
+                    }
+                    if (widget.groupdata[widget.index]['owner'] !=
+                        widget.username) {
+                      CoolAlert.show(
+                          context: context,
+                          type: CoolAlertType.confirm,
+                          text: 'Want to leave the group',
+                          confirmBtnText: 'Yes',
+                          onConfirmBtnTap: () {
+                            List users =
+                                widget.groupdata[widget.index]['users'];
+                            users.remove(widget.username);
+                            FirebaseFirestore.instance
+                                .collection('groups')
+                                .doc(widget.groupdata[widget.index].id)
+                                .update(
+                              {'users': users},
+                            );
+                            Navigator.of(context).pop();
+                          },
+                          cancelBtnText: 'No',
+                          onCancelBtnTap: () async {
+                            Navigator.of(context).pop();
+                          },
+                          confirmBtnColor: ThemeData().accentColor);
+                    }
                   },
                   child: Column(
                     children: <Widget>[
-                      Icon(Icons.add_box_outlined),
+                      if (widget.groupdata[widget.index]['owner'] ==
+                          widget.username)
+                        Icon(Icons.delete),
+                      if (widget.groupdata[widget.index]['owner'] !=
+                          widget.username)
+                        Icon(Icons.logout),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 2.0),
                       ),
-                      Text('Add'),
-                      Text('Members'),
+                      if (widget.groupdata[widget.index]['owner'] ==
+                          widget.username)
+                        Text('Delete'),
+                      if (widget.groupdata[widget.index]['owner'] !=
+                          widget.username)
+                        Text('Leave'),
+                      Text('Group'),
                     ],
                   ),
                 ),
-            ],
-          ),
+                if (widget.groupdata[widget.index]['owner'] == widget.username)
+                  FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0)),
+                    onPressed: () {
+                      addmem(context, widget.groupdata[widget.index]['users'],
+                          widget.groupdata[widget.index].id);
+                    },
+                    child: Column(
+                      children: <Widget>[
+                        Icon(Icons.add_box_outlined),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2.0),
+                        ),
+                        Text('Add'),
+                        Text('Members'),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
         ],
       ),
     );

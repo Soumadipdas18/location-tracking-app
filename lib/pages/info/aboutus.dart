@@ -32,7 +32,7 @@ class Aboutus extends StatelessWidget {
               Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    'This App is developed by Soumadip Das and Suvayan Nath',
+                    'This App is developed by Soumadip Das',
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: _large ? 20 : (_medium ? 17.5 : 15),
@@ -58,16 +58,7 @@ class Aboutus extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  "suvayannath1@gmail.com",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: _large ? 20 : (_medium ? 17.5 : 15),
-                  ),
-                ),
-              ),
+
               Spacer(),
             ],
           )),
