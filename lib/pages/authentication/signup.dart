@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:locationtracker/helpers/sharedpref.dart';
 import 'package:locationtracker/models/custom_shape.dart';
 import 'package:locationtracker/models/responsive_ui.dart';
-import 'package:locationtracker/pages/groups/groups.dart';
+import 'package:locationtracker/pages/groups/home.dart';
 
 class Signuppage extends StatefulWidget {
   const Signuppage({Key? key, required this.title, required this.isDark})
@@ -290,7 +290,7 @@ class _FormsState extends State<Forms> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) => Groups(
+                builder: (context) => Home(
                     username: usernameEditingController.text,
                     isDark: widget.isDark)));
         coolalertsuccess('Signup successful');

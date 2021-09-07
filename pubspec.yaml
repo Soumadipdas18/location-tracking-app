@@ -32,13 +32,13 @@ dependencies:
   random_color: ^1.0.5
   shared_preferences: ^0.5.7+3
   day_night_switcher: ^0.2.0+1
-  settings_ui: ^1.0.0
   flutter_phoenix: ^1.0.0
   firebase_core: ^1.4.0
   firebase_auth: ^3.0.1
   cloud_firestore: ^2.4.0
   cupertino_icons: ^1.0.3
   animated_background: ^2.0.0
+  flutter_easyloading: ^3.0.0
 
 
 dev_dependencies:

@@ -83,7 +83,6 @@ class _MyLocationState extends State<MyLocation> {
     _controller = _ctrlr;
     _controller.setMapStyle(_mapStyle);
     location.onLocationChanged.listen((l) async {
-      print(l.latitude);
       GeoFirePoint myloc = Geoflutterfire()
           .point(latitude: l.latitude!, longitude: l.longitude!);
       dbadd(myloc);

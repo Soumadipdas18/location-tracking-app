@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:locationtracker/constants/constants.dart';
 import 'package:locationtracker/helpers/sharedpref.dart';
 import 'package:flutter/animation.dart';
-import 'package:locationtracker/pages/groups/groups.dart';
+import 'package:locationtracker/pages/groups/home.dart';
 import 'package:locationtracker/pages/welcomescreen/AnimatedBubble.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -358,7 +358,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         context,
         MaterialPageRoute(
             builder: (BuildContext context) =>
-                Groups(username: _username, isDark: widget.isDark)),
+                Home(username: _username, isDark: widget.isDark)),
       );
     } else {
       Navigator.of(context).pushNamed(SIGN_UP);

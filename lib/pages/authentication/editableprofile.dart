@@ -21,9 +21,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('My profile'),
-      ),
       body: SingleChildScrollView(
         child: new Column(
           children: <Widget>[

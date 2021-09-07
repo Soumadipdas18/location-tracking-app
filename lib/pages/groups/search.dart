@@ -58,7 +58,6 @@ class _SearchState extends State<Search>
   }
 
   void _clearSearchQuery() {
-    print("close search box");
     setState(() {
       _searchQuery.clear();
     });
@@ -174,7 +173,7 @@ class _SearchState extends State<Search>
                               .map((item) => _buildChip(
                                   item,
                                   _randomColor.randomColor(
-                                      colorHue: ColorHue.blue)))
+                                      colorHue: ColorHue.blue),),)
                               .toList()
                               .cast<Widget>()),
                     ),
